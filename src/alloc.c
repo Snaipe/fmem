@@ -49,7 +49,7 @@ int fmemi_cursor(struct fmemi_buf *buf, struct fmem_stream *from)
     }
 
     buf->mem = from->buf->mem + from->cursor;
-    buf->size = from->buf->size - from->cursor;
+    buf->size = from->region_size - from->cursor;
     return 0;
 }
 

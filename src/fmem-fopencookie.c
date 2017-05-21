@@ -39,6 +39,8 @@ static ssize_t mem_write(void *cookie, const char *buf, size_t size)
 
     size_t copied = fmemi_copy(&to, &from);
     stream->cursor += copied;
+    if (stream->buf->size < stream->cursor)
+        stream->buf->size = stream->cursor;
     return copied;
 }
 
@@ -73,6 +75,7 @@ static int mem_seek(void *cookie, off64_t *off, int whence)
         return -1;
     }
     *off = newoff;
+    stream->cursor = newoff;
     return 0;
 }
 
@@ -106,7 +109,7 @@ FILE *fmem_open(fmem *file, const char *mode)
     }
 
     *stream = (struct fmem_stream) {
-        .buf = &cv.buf,
+        .buf = cv.buf,
         .region_size = 128,
     };
 

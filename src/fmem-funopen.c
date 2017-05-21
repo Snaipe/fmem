@@ -41,6 +41,8 @@ static int mem_write(void *cookie, const char *buf, int size)
 
     size_t copied = fmemi_copy(&to, &from);
     stream->cursor += copied;
+    if (stream->buf->size < stream->cursor)
+        stream->buf->size = stream->cursor;
     if (copied > INT_MAX) {
         errno = EOVERFLOW;
         return -1;
@@ -88,6 +90,7 @@ static off_t mem_seek(void *cookie, off_t off, int whence)
         errno = EOVERFLOW;
         return -1;
     }
+    stream->cursor = newoff;
     return newoff;
 }
 
@@ -114,7 +117,7 @@ FILE *fmem_open(fmem *file, const char *mode)
     }
 
     *stream = (struct fmem_stream) {
-        .buf = &cv.buf,
+        .buf = cv.buf,
         .region_size = 128,
     };
 
