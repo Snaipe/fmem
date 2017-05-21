@@ -6,10 +6,10 @@ matrix:
     # open_memstream
     - compiler: gcc
     # fopencookie
-    - env: [CMAKE_EXTRA_ARGS=-DHAVE_OPEN_MEMSTREAM=FALSE]
+    - env: [CMAKE_EXTRA_ARGS="-DHAVE_OPEN_MEMSTREAM=FALSE"]
       compiler: gcc
     # tmpfile
-    - env: [CMAKE_EXTRA_ARGS=-DHAVE_OPEN_MEMSTREAM=FALSE -DHAVE_FOPENCOOKIE=FALSE]
+    - env: [CMAKE_EXTRA_ARGS="-DHAVE_OPEN_MEMSTREAM=FALSE -DHAVE_FOPENCOOKIE=FALSE"]
       compiler: gcc
     # funopen
     - os: osx
