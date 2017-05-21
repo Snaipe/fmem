@@ -10,16 +10,16 @@ void teardown(void) { fmem_term(&fm); }
 
 TestSuite(fmem, .init = setup, .fini = teardown);
 
-#define assert_written(Fmem, What) do {                 \
-        const char *__str = (What);                     \
-        void *__base;                                   \
-        size_t __size;                                  \
-        fmem_mem(&(Fmem), &__base, &__size);            \
-        cr_assert_eq(__size, strlen(__str),             \
-                "size is %llu, not %llu",               \
-                (unsigned long long) __size,            \
-                (unsigned long long) strlen(__str));    \
-        cr_assert_str_eq((char *)__base, __str);        \
+#define assert_written(Fmem, What) do {                     \
+        const char *__str = (What);                         \
+        void *__base;                                       \
+        size_t __size;                                      \
+        fmem_mem(&(Fmem), &__base, &__size);                \
+        cr_assert_eq(__size, strlen(__str),                 \
+                "size is %llu, not %llu",                   \
+                (unsigned long long) __size,                \
+                (unsigned long long) strlen(__str));        \
+        cr_assert(!memcmp((char *)__base, __str, __size));  \
     } while (0)
 
 Test(fmem, open)
@@ -35,9 +35,10 @@ Test(fmem, mem)
 
     FILE *f = fmem_open(&fm, "w+");
     fprintf(f, "%s", str);
-    fclose(f);
+    fflush(f);
 
     assert_written(fm, str);
+    fclose(f);
 }
 
 Test(fmem, append)
@@ -50,24 +51,27 @@ Test(fmem, append)
     assert_written(fm, "abcd");
 
     fprintf(f, "efgh");
-    fclose(f);
+    fflush(f);
 
     assert_written(fm, "abcdefgh");
+    fclose(f);
 }
 
 Test(fmem, reopen)
 {
     FILE *f = fmem_open(&fm, "w+");
     fprintf(f, "abcd");
-    fclose(f);
+    fflush(f);
 
     assert_written(fm, "abcd");
+    fclose(f);
 
     f = fmem_open(&fm, "w+");
     fprintf(f, "efgh");
-    fclose(f);
+    fflush(f);
 
     assert_written(fm, "efgh");
+    fclose(f);
 }
 
 Test(fmem, cursor)
@@ -76,9 +80,11 @@ Test(fmem, cursor)
     fprintf(f, "abcd");
     fseek(f, 2, SEEK_SET);
     fprintf(f, "efgh");
-    fclose(f);
+    fflush(f);
 
     assert_written(fm, "abefgh");
+
+    fclose(f);
 }
 
 Test(fmem, large)
@@ -97,7 +103,7 @@ Test(fmem, large)
         }
     }
 
-    fclose(f);
+    fflush(f);
 
     void *base;
     size_t size;
@@ -107,4 +113,6 @@ Test(fmem, large)
             "size is %llu, not %llu",
             (unsigned long long) size,
             (unsigned long long) 1024 * sizeof (buf));
+
+    fclose(f);
 }
