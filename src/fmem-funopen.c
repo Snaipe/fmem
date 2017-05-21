@@ -1,5 +1,7 @@
 #include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "alloc.h"
 #include "fmem.h"
@@ -104,15 +106,15 @@ FILE *fmem_open(fmem *file, const char *mode)
 {
     union fmem_conv cv = { .fm = file };
 
-    free(cv.buf.mem);
-    cv.buf.mem = malloc(128);
-    if (!cv.buf.mem)
+    free(cv.buf->mem);
+    cv.buf->mem = malloc(128);
+    if (!cv.buf->mem)
         return NULL;
 
     struct fmem_stream *stream = malloc(sizeof (*stream));
     if (!stream) {
-        free(cv.buf.mem);
-        cv.buf.mem = NULL;
+        free(cv.buf->mem);
+        cv.buf->mem = NULL;
         return NULL;
     }
 
