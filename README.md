@@ -1,5 +1,8 @@
 # fmem
 
+[![Unix Build Status](https://img.shields.io/travis/Snaipe/fmem/master.svg?label=linux)](https://travis-ci.org/Snaipe/fmem) 
+[![Windows Build Status](https://img.shields.io/appveyor/ci/Snaipe/fmem/master.svg?label=windows)](https://ci.appveyor.com/project/Snaipe/fmem/branch/master)
+
 A cross-platform library for opening memory-backed libc streams.
 
 This library was written for [Criterion][criterion] to implement stringification functions for user-defined types.
