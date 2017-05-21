@@ -59,7 +59,7 @@ FILE *fmem_open(fmem *file, const char *mode)
         int wb = snprintf(&path[rc], MAX_PATH - rc, "\\fmem%x.tmp", randnum);
         if (wb < 0)
             return NULL;
-        if (wb > MAX_PATH - rc) {
+        if ((DWORD)wb > (DWORD)MAX_PATH - rc) {
             errno = ENAMETOOLONG;
             return NULL;
         }
