@@ -12,6 +12,10 @@ include (CheckSymbolExists)
 include (CheckCSourceCompiles)
 include (GNUInstallDirs)
 
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -pedantic")
+endif ()
+
 list (APPEND CMAKE_REQUIRED_DEFINITIONS
   -D_GNU_SOURCE
   -D_CRT_RAND_S
