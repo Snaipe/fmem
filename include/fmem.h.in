@@ -10,10 +10,14 @@ struct fmem_reserved {
 };
 
 typedef struct fmem_reserved fmem;
-
+#ifdef __cplusplus
+extern "C" {
+#endif 
 FMEM_API void fmem_init(fmem *file);
 FMEM_API void fmem_term(fmem *file);
 FMEM_API FILE *fmem_open(fmem *file, const char *mode);
 FMEM_API void fmem_mem(fmem *file, void **mem, size_t *size);
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* !FMEM_H_ */
