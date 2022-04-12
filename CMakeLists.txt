@@ -121,7 +121,7 @@ install(FILES
 
 include (CTest)
 
-if (BUILD_TESTING)
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
   find_package (Criterion REQUIRED)
   add_subdirectory (test)
 endif ()
