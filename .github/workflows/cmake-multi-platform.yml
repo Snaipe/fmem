@@ -59,10 +59,16 @@ jobs:
         upgrade: true
 
 
-    - name: Set reusable strings
-      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+    - name: Set reusable strings (Windows)
+      if: matrix.os == 'windows-latest'
       id: strings
-      shell: ${{ (matrix.os == 'windows-latest') && 'msys2 {0}' || 'bash' }}
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      shell: msys2 {0}
+    
+    - name: Set reusable strings (Other OS)
+      if: matrix.os != 'windows-latest'
+      id: strings
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
