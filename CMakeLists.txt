@@ -133,8 +133,13 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
         if (MESON_FOUND)
             message(STATUS "Criterion not installed, cloning and building from source.")
 
-            # Clone the Criterion repository
-            execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git)
+             # Check if the Criterion directory already exists
+            if(NOT EXISTS "${PROJECT_SOURCE_DIR}/Criterion")
+              message(STATUS "Criterion source not found, cloning from repository.")
+              execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git)
+            else()
+                message(STATUS "Criterion source found, skipping clone.")
+            endif()
 
             set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
             set(CRITERION_LIBRARIES "${PROJECT_SOURCE_DIR}/build/src")
