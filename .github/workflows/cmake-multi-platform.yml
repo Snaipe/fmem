@@ -61,10 +61,9 @@ jobs:
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
-      shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
+      shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
 
     - name: Configure CMake (Windows)
     # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -76,16 +75,7 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
-      shell: msys2 {0}
-
-    - name: Configure CMake (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+      shell: ${{ matrix.os == 'windows-latest' && 'msys2 {0}' || 'bash' }}
 
 
 
