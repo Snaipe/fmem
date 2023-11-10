@@ -12,6 +12,11 @@ if(EXISTS "${CMAKE_BINARY_DIR}/Criterion/subprojects/boxfort/src/libboxfort.a")
     list(APPEND CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/subprojects/boxfort/src/libboxfort.a")
 endif()
 
+if(EXISTS "${CMAKE_BINARY_DIR}/Criterion/subprojects/libgit2/src/libgit2.a")
+    list(APPEND CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/subprojects/libgit2/src/libgit2.a")
+endif()
+
+
 include_directories(SYSTEM "${CRITERION_INCLUDE_DIRS}")
 
 # Add a debug message for test sources
