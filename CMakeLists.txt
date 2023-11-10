@@ -119,9 +119,34 @@ install(FILES
    ${PROJECT_BINARY_DIR}/gen/fmem.h
    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
    
+# Check if this is the main project and BUILD_TESTING was not already set by the user
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND NOT DEFINED BUILD_TESTING)
+    message(WARNING "Detected that we're only compiling this project. BUILD_TESTING was not explicitly set, defaulting to BUILD_TESTING=ON. To disable testing, set BUILD_TESTING=OFF.")
+endif()
+
 include (CTest)
 
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
-  find_package (Criterion REQUIRED)
-  add_subdirectory (test)
-endif ()
+    find_package(Criterion QUIET)
+    if (NOT CRITERION_FOUND)
+        find_program(MESON_FOUND meson)
+        if (MESON_FOUND)
+            message(STATUS "Criterion not installed, cloning and building from source.")
+
+            # Clone the Criterion repository
+            execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git)
+        
+            # Navigate to the Criterion directory and run Meson build commands
+            execute_process(COMMAND ${CMAKE_COMMAND} -E chdir Criterion meson build)
+            execute_process(COMMAND ${CMAKE_COMMAND} -E chdir Criterion meson compile -C build)
+
+            set(CRITERION_INCLUDE_DIRS "Criterion/include")
+            set(CRITERION_LIBRARIES "Criterion/build/src")
+            # Adjust paths as needed
+        else()
+            message(FATAL_ERROR "Meson build system not found. Unable to build Criterion from source.")
+        endif()
+    endif()
+
+    add_subdirectory(test)
+endif()
