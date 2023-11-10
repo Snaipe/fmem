@@ -126,13 +126,6 @@ endif()
 
 include (CTest)
 
-# Set the library file extension based on the operating system
-if (WIN32)
-    set(LIB_EXT ".dll.a")
-else()
-    set(LIB_EXT ".a")
-endif()
-
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
     find_package(Criterion QUIET)
     if (NOT CRITERION_FOUND)
@@ -147,8 +140,11 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
 
             # Set include directories and library paths
             set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
-            set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion${CRITERION_LIB_EXT}")  # For Windows
-            
+            if (WIN32)
+             set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.dll.a")  # For Windows
+            else()
+              set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.a")  # For Linux and other Unix-like systems
+            endif()
         
 
             # Check if criterion.h exists in the provided include directory
