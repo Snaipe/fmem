@@ -46,6 +46,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    # Add Meson installation steps here
+    - name: Install Meson (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y meson
+
+    - name: Install Meson (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install meson
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
