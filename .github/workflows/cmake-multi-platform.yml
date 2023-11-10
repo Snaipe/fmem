@@ -55,7 +55,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2
+        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake
         env: |
           MSYS2_ARG_CONV_EXCL="*"
           MSYS_NO_PATHCONV=1
@@ -81,7 +81,7 @@ jobs:
         -S ${{ github.workspace }}
       shell: msys2 {0}
 
-    - name: Configure CMake
+    - name: Configure CMake (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
