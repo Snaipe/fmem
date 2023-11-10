@@ -135,13 +135,22 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
 
             # Clone the Criterion repository
             execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git)
+
+            set(CRITERION_INCLUDE_DIRS "Criterion/include")
+            set(CRITERION_LIBRARIES "Criterion/build/src")
+
+            # Check if criterion.h exists in the provided include directory
+            if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion.h")
+            message(STATUS "Found criterion.h in: ${CRITERION_INCLUDE_DIRS}")
+            else()
+            message(FATAL_ERROR "criterion.h not found in: ${CRITERION_INCLUDE_DIRS}")
+            endif()
         
             # Navigate to the Criterion directory and run Meson build commands
             execute_process(COMMAND ${CMAKE_COMMAND} -E chdir Criterion meson build)
             execute_process(COMMAND ${CMAKE_COMMAND} -E chdir Criterion meson compile -C build)
 
-            set(CRITERION_INCLUDE_DIRS "Criterion/include")
-            set(CRITERION_LIBRARIES "Criterion/build/src")
+            
             # Adjust paths as needed
         else()
             message(FATAL_ERROR "Meson build system not found. Unable to build Criterion from source.")
