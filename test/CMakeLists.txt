@@ -14,6 +14,21 @@ endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/Criterion/subprojects/libgit2/src/libgit2.a")
     list(APPEND CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/subprojects/libgit2/src/libgit2.a")
+else()
+    # Execute the find program to locate libgit2.a
+    execute_process(
+        COMMAND find "${CMAKE_BINARY_DIR}/Criterion" -name libgit2.a
+        OUTPUT_VARIABLE FOUND_LIBGIT2
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    # If found, append to CRITERION_LIBRARIES
+    if(FOUND_LIBGIT2)
+        message(STATUS "Found libgit2.a at: ${FOUND_LIBGIT2}")
+        list(APPEND CRITERION_LIBRARIES "${FOUND_LIBGIT2}")
+    else()
+        message(WARNING "libgit2.a not found in Criterion subprojects.")
+    endif()
 endif()
 
 
