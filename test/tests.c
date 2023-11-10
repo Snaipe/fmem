@@ -1,4 +1,4 @@
-#include <criterion/criterion.h>
+#include <criterion.h>
 #include <stdio.h>
 
 #include "fmem.h"
