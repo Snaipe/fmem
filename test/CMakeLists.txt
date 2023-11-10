@@ -1,6 +1,8 @@
 set (TEST_SOURCES tests.c)
+file(GLOB ALL_LIB_A_FILES "${CMAKE_BINARY_DIR}/Criterion/subprojects/*/src/*.a")
+message(STATUS "Found .a files: ${ALL_LIB_A_FILES}")
 
-include_directories(SYSTEM "${CRITERION_INCLUDE_DIRS}")
+include_directories(SYSTEM "${CRITERION_INCLUDE_DIRS}" "${ALL_LIB_A_FILES}")
 
 # Add a debug message for test sources
 message(STATUS "Adding executable for unit_tests with sources: ${TEST_SOURCES}")
