@@ -136,8 +136,8 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
             # Clone the Criterion repository
             execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git)
 
-            set(CRITERION_INCLUDE_DIRS "Criterion/include")
-            set(CRITERION_LIBRARIES "Criterion/build/src")
+            set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
+            set(CRITERION_LIBRARIES "${PROJECT_SOURCE_DIR}/build/src")
 
             # Check if criterion.h exists in the provided include directory
             if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion.h")
