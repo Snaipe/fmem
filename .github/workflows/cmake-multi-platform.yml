@@ -58,9 +58,11 @@ jobs:
         install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake
         upgrade: true
 
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
+      if: matrix.os == 'ubuntu-latest'
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
