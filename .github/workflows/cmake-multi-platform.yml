@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      BUILD_OUTPUT_DIR: ${{ github.workspace }}/build 
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -59,26 +61,12 @@ jobs:
         upgrade: true
 
 
-    - name: Set reusable strings (Windows)
-      if: matrix.os == 'windows-latest'
-      id: strings
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-      shell: msys2 {0}
-    
-    - name: Set reusable strings (Other OS)
-      if: matrix.os != 'windows-latest'
-      id: strings
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
-
     - name: Configure CMake (Windows)
     # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       if: matrix.os == 'windows-latest'
       run: |
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -B $BUILD_OUTPUT_DIR
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -88,7 +76,7 @@ jobs:
     - name: Configure CMake (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -B $BUILD_OUTPUT_DIR
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -98,10 +86,10 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build $BUILD_OUTPUT_DIR --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      working-directory: $BUILD_OUTPUT_DIR
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
