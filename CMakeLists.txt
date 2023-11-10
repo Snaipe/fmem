@@ -140,10 +140,10 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
             set(CRITERION_LIBRARIES "${PROJECT_SOURCE_DIR}/build/src")
 
             # Check if criterion.h exists in the provided include directory
-            if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion.h")
-            message(STATUS "Found criterion.h in: ${CRITERION_INCLUDE_DIRS}")
+            if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion/criterion.h")
+            message(STATUS "Found criterion.h in: ${CRITERION_INCLUDE_DIRS}/criterion")
             else()
-            message(FATAL_ERROR "criterion.h not found in: ${CRITERION_INCLUDE_DIRS}")
+            message(FATAL_ERROR "criterion.h not found in: ${CRITERION_INCLUDE_DIRS}/criterion")
             endif()
         
             # Navigate to the Criterion directory and run Meson build commands
