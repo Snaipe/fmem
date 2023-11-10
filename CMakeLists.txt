@@ -125,11 +125,31 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND NOT DEFINED BUILD_
 endif()
 
 include (CTest)
-
+if (WIN32)
+    set(LIB_EXT ".dll.a")
+else()
+    set(LIB_EXT ".a")
+endif()
+  
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
     find_package(Criterion QUIET)
     if (NOT CRITERION_FOUND)
         find_program(MESON_FOUND meson)
+          
+  if(NOT MESON_FOUND)
+  message(STATUS "Meson not found. Attempting to call meson --version for debugging.")
+  execute_process(
+      COMMAND meson --version
+      RESULT_VARIABLE MESON_VERSION_RESULT
+      OUTPUT_VARIABLE MESON_VERSION_OUTPUT
+      ERROR_QUIET
+  )
+  if(MESON_VERSION_RESULT EQUAL 0)
+      message(STATUS "Meson version: ${MESON_VERSION_OUTPUT}")
+  else()
+      message(WARNING "Meson not found or not callable from the shell.")
+  endif()
+endif()
         if (MESON_FOUND)
             message(STATUS "Criterion not installed, cloning and building from source.")
 
@@ -140,12 +160,7 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
 
             # Set include directories and library paths
             set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
-            if (WIN32)
-             set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.dll.a")  # For Windows
-            else()
-              set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.a")  # For Linux and other Unix-like systems
-            endif()
-        
+            set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion${LIB_EXT}")        
 
             # Check if criterion.h exists in the provided include directory
             if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion/criterion.h")

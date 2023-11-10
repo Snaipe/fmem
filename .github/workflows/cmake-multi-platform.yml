@@ -38,11 +38,7 @@ jobs:
             cpp_compiler: clang++
         exclude:
           - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
             c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
 
     steps:
     - uses: actions/checkout@v3
@@ -53,10 +49,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y meson
 
-    - name: Install Meson (Windows)
+    - name: Install MinGW and Meson (Windows)
       if: matrix.os == 'windows-latest'
-      run: |
-        choco install meson
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2
+
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
