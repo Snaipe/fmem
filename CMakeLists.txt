@@ -140,7 +140,13 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
 
             # Set include directories and library paths
             set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
-            file(GLOB CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/build/src/*")
+            if (WIN32)
+             set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.dll.a")  # For Windows
+            else()
+              set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion.a")  # For Linux and other Unix-like systems
+            endif()
+        
+
             # Check if criterion.h exists in the provided include directory
             if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion/criterion.h")
             message(STATUS "Found criterion.h in: ${CRITERION_INCLUDE_DIRS}/criterion")
