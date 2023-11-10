@@ -56,7 +56,10 @@ jobs:
       with:
         msystem: MINGW64
         install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2
-
+        env: |
+          MSYS2_ARG_CONV_EXCL="*"
+          MSYS_NO_PATHCONV=1
+          PATH=${{ env.MSYS2_PATH }}\mingw64\bin;${{ env.MSYS2_PATH }}\usr\bin;${{ env.PATH }}
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
