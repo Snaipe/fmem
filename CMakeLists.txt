@@ -139,7 +139,7 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
   if(NOT MESON_FOUND)
   message(STATUS "Meson not found. Attempting to call meson --version for debugging.")
   execute_process(
-      COMMAND meson --version
+      COMMAND mingw-w64-x86_64-meson --version
       RESULT_VARIABLE MESON_VERSION_RESULT
       OUTPUT_VARIABLE MESON_VERSION_OUTPUT
       ERROR_QUIET
