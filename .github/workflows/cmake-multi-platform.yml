@@ -80,9 +80,15 @@ jobs:
 
 
 
-    - name: Build
+    - name: Build (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: msys2 {0}
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build $BUILD_OUTPUT_DIR --config ${{ matrix.build_type }}
+
+    - name: Build (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: cmake --build $BUILD_OUTPUT_DIR --config ${{ matrix.build_type }}s
 
     - name: Test
       working-directory: ${{ env.BUILD_OUTPUT_DIR }}
