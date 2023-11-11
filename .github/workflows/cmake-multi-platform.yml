@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
 
       # Set up a matrix to run the following 3 configurations:
-      # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
+      # 1. <Windows, Release, latest MinGW compiler toolchain on the default runner image, MSYS Generator>
       # 2. <Linux, Release, latest GCC compiler toolchain on the default runner image, default generator>
       # 3. <Linux, Release, latest Clang compiler toolchain on the default runner image, default generator>
       #
@@ -57,7 +57,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake
+        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake mingw-w64-x86_64-ntldd
         upgrade: true
 
 
@@ -100,5 +100,5 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: msys2 {0}
       run: |
-        export PATH="$BUILD_OUTPUT_DIR/Criterion/build/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanomsg:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanopb:$BUILD_OUTPUT_DIR/Criterion/subprojects/boxfort/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/libgit2:$PATH"
+        PATH="$BUILD_OUTPUT_DIR/Criterion/build/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanomsg:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanopb:$BUILD_OUTPUT_DIR/Criterion/subprojects/boxfort/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/libgit2:$PATH"  ntldd ctest --build-config ${{ matrix.build_type }}  --output-on-failure
         ctest --build-config ${{ matrix.build_type }}  --output-on-failure
