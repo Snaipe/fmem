@@ -100,5 +100,6 @@ jobs:
       if: matrix.os == 'windows-latest'
       shell: msys2 {0}
       run: |
-        PATH="$BUILD_OUTPUT_DIR/Criterion/build/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanomsg:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanopb:$BUILD_OUTPUT_DIR/Criterion/subprojects/boxfort/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/libgit2:$PATH"  ntldd test/unit_tests.exe
+        export PATH="$BUILD_OUTPUT_DIR/Criterion/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanomsg:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanopb:$BUILD_OUTPUT_DIR/Criterion/subprojects/boxfort/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/libgit2:$PATH"  
+        ntldd test/unit_tests.exe
         ctest --build-config ${{ matrix.build_type }}  --output-on-failure
