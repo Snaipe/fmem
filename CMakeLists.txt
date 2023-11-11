@@ -74,8 +74,9 @@ else ()
   message (FATAL_ERROR "No memory stream implementation found")
 endif ()
 
-include_directories (include src ${PROJECT_BINARY_DIR}/gen)
 add_library (fmem ${SOURCES})
+add_library (fmem::fmem ALIAS fmem)
+target_include_directories (fmem PUBLIC include src "${PROJECT_BINARY_DIR}/gen")
 
 get_property (FMEM_LIBTYPE
   TARGET fmem
@@ -115,13 +116,66 @@ install(TARGETS fmem
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
-  fmem.h
-  ${PROJECT_BINARY_DIR}/gen/fmem-export.h
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+   ${PROJECT_BINARY_DIR}/gen/fmem.h
+   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+   
+# Check if this is the main project and BUILD_TESTING was not already set by the user
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND NOT DEFINED BUILD_TESTING)
+    message(WARNING "Detected that we're only compiling this project. BUILD_TESTING was not explicitly set, defaulting to BUILD_TESTING=ON. To disable testing, set BUILD_TESTING=OFF.")
+endif()
 
 include (CTest)
+if (WIN32)
+    set(LIB_EXT ".dll.a")
+else()
+    set(LIB_EXT ".a")
+endif()
+  
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" AND BUILD_TESTING)
+    find_package(Criterion QUIET)
+    if (NOT CRITERION_FOUND)
+        find_program(MESON_FOUND meson)
+          
+  if(NOT MESON_FOUND)
+  message(STATUS "Meson not found. Attempting to call meson --version for debugging.")
+  execute_process(
+      COMMAND meson --version
+      RESULT_VARIABLE MESON_VERSION_RESULT
+      OUTPUT_VARIABLE MESON_VERSION_OUTPUT
+      ERROR_QUIET
+  )
+  if(MESON_VERSION_RESULT EQUAL 0)
+      message(STATUS "Meson version: ${MESON_VERSION_OUTPUT}")
+  else()
+      message(WARNING "Meson not found or not callable from the shell.")
+  endif()
+endif()
+        if (MESON_FOUND)
+            message(STATUS "Criterion not installed, cloning and building from source.")
 
-if (BUILD_TESTING)
-  find_package (Criterion REQUIRED)
-  add_subdirectory (test)
-endif ()
+            # Clone Criterion into the project root directory
+            if(NOT EXISTS "${PROJECT_SOURCE_DIR}/Criterion")
+                execute_process(COMMAND git clone --depth=1 https://github.com/Snaipe/Criterion.git "${PROJECT_SOURCE_DIR}/Criterion")
+            endif()
+
+            # Set include directories and library paths
+            set(CRITERION_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Criterion/include")
+            set(CRITERION_LIBRARIES "${CMAKE_BINARY_DIR}/Criterion/src/libcriterion${LIB_EXT}")        
+
+            # Check if criterion.h exists in the provided include directory
+            if(EXISTS "${CRITERION_INCLUDE_DIRS}/criterion/criterion.h")
+            message(STATUS "Found criterion.h in: ${CRITERION_INCLUDE_DIRS}/criterion")
+            else()
+            message(FATAL_ERROR "criterion.h not found in: ${CRITERION_INCLUDE_DIRS}/criterion")
+            endif()
+            # Build Criterion in a subdirectory within the main build directory
+            execute_process(COMMAND ${CMAKE_COMMAND} -E chdir "${PROJECT_SOURCE_DIR}/Criterion" meson "${CMAKE_BINARY_DIR}/Criterion")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E chdir "${PROJECT_SOURCE_DIR}/Criterion" meson compile -C "${CMAKE_BINARY_DIR}/Criterion")
+
+        else()
+            message(FATAL_ERROR "Meson build system not found. Unable to build Criterion from source.")
+        endif()
+    endif()
+
+    add_subdirectory(test)
+endif()
