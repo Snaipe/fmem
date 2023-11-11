@@ -57,7 +57,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW64
-        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake mingw-w64-x86_64-ntldd
+        install: mingw-w64-x86_64-meson mingw-w64-x86_64-libgit2 mingw-w64-x86_64-gcc mingw-w64-x86_64-ninja base-devel git mingw-w64-x86_64-cmake
         upgrade: true
 
 
@@ -93,7 +93,12 @@ jobs:
     - name: Test (Ubuntu)
       working-directory: ${{ env.BUILD_OUTPUT_DIR }}
       if: matrix.os == 'ubuntu-latest'
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: |
+        ctest --build-config ${{ matrix.build_type }}  --output-on-failure
+        if [ $? -ne 0 ]; then
+          cat Testing/Temporary/LastTest.log
+          exit 1
+        fi
 
     - name: Test (Windows)
       working-directory: ${{ env.BUILD_OUTPUT_DIR }}
@@ -101,5 +106,8 @@ jobs:
       shell: msys2 {0}
       run: |
         export PATH="$BUILD_OUTPUT_DIR/Criterion/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanomsg:$BUILD_OUTPUT_DIR/Criterion/subprojects/nanopb:$BUILD_OUTPUT_DIR/Criterion/subprojects/boxfort/src:$BUILD_OUTPUT_DIR/Criterion/subprojects/libgit2:$PATH"  
-        ntldd test/unit_tests.exe
         ctest --build-config ${{ matrix.build_type }}  --output-on-failure
+        if [ $? -ne 0 ]; then
+          cat Testing/Temporary/LastTest.log
+          exit 1
+        fi
